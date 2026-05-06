@@ -11,7 +11,7 @@
 
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif; background: #F2F2F2; color: #1C1C1C; min-height: 100vh; padding: 40px 20px 80px; }
+  body { font-family: 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif; background: #F2F2F2; colohr: #1C1C1C; min-height: 100vh; padding: 40px 20px 80px; }
   .card { max-width: 900px; margin: 0 auto; background: #fff; border-radius: 4px; box-shadow: 0 1px 6px rgba(0,0,0,.08); overflow: hidden; }
   .card-header { padding: 32px 36px 20px; border-bottom: 1px solid #E8E8E8; }
   .card-header h1 { font-size: 24px; font-weight: 700; letter-spacing: -0.5px; }
@@ -155,7 +155,7 @@
   docRef.onSnapshot({ includeMetadataChanges: true }, snapshot => {
     if (snapshot.metadata.hasPendingWrites) return;
     if (localChangePending) return;
-    if (snapshot.exists()) {
+    if (snapshot.exists) {
       const d = snapshot.data();
       state.baseYear = d.baseYear || 2026;
       state.numRows  = d.numRows  || 13;
