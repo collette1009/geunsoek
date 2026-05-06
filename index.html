@@ -4,8 +4,14 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>근속교사 현황표</title>
+
+<!-- Firebase SDK (compat) -->
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
   body {
     font-family: 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif;
     background: #F2F2F2;
@@ -13,6 +19,7 @@
     min-height: 100vh;
     padding: 40px 20px 80px;
   }
+
   .card {
     max-width: 900px;
     margin: 0 auto;
@@ -21,8 +28,10 @@
     box-shadow: 0 1px 6px rgba(0,0,0,.08);
     overflow: hidden;
   }
+
   .card-header { padding: 32px 36px 20px; border-bottom: 1px solid #E8E8E8; }
   .card-header h1 { font-size: 24px; font-weight: 700; letter-spacing: -0.5px; }
+
   .meta-bar {
     margin-top: 12px;
     display: flex;
@@ -35,6 +44,7 @@
   .meta-item { display: flex; align-items: center; padding: 0 12px; border-right: 1px solid #E0E0E0; gap: 4px; }
   .meta-item:first-child { padding-left: 0; }
   .meta-item:last-child  { border-right: none; }
+
   .meta-input {
     width: 52px;
     border: none;
@@ -51,9 +61,11 @@
     cursor: pointer;
   }
   .meta-input:focus { border-bottom-color: #1F1F1F; background: #F5F5F5; border-radius: 2px 2px 0 0; }
+
   .badge-gold  { display:inline-flex;align-items:center;gap:4px;background:#FBBF24;color:#7C2D12;padding:2px 9px;border-radius:20px;font-size:11px;font-weight:600; }
   .badge-green { display:inline-flex;align-items:center;gap:4px;background:#34D399;color:#064E3B;padding:2px 9px;border-radius:20px;font-size:11px;font-weight:600; }
   .badge-blue  { display:inline-flex;align-items:center;gap:4px;background:#60A5FA;color:#1E3A5F;padding:2px 9px;border-radius:20px;font-size:11px;font-weight:600; }
+
   .row-ctrl { display: flex; align-items: center; gap: 6px; padding: 0 0 0 12px; border-left: 1px solid #E0E0E0; }
   .row-btn {
     width: 24px; height: 24px;
@@ -68,6 +80,26 @@
     transition: all .15s;
   }
   .row-btn:hover { background: #F0F0F0; border-color: #AAA; }
+
+  .sync-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 20px;
+    background: #F0FDF4;
+    color: #065F46;
+    font-weight: 500;
+    transition: all .3s;
+  }
+  .sync-badge.syncing { background: #FFF7ED; color: #92400E; }
+  .sync-badge.offline { background: #FEF2F2; color: #991B1B; }
+  .sync-dot { width: 6px; height: 6px; border-radius: 50%; background: #34D399; transition: background .3s; }
+  .sync-badge.syncing .sync-dot { background: #F59E0B; animation: pulse 1s infinite; }
+  .sync-badge.offline .sync-dot { background: #EF4444; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
+
   .table-wrap { overflow-x: auto; }
   table { width: 100%; border-collapse: collapse; font-size: 13px; }
   thead tr { background: #1F1F1F; color: #fff; }
@@ -76,33 +108,30 @@
   tbody tr:last-child { border-bottom: none; }
   tbody tr:nth-child(even) { background: #FAFAFA; }
   tbody tr:hover { background: #F5F5F5 !important; }
+
   td { padding: 10px 14px; text-align: center; color: #333; }
   td.no { color: #AAAAAA; font-size: 12px; width: 44px; }
+
   td.name input, td.year input, td.note input {
-    width: 100%;
-    border: none;
-    background: transparent;
-    text-align: center;
-    font-size: 13px;
-    font-family: inherit;
-    color: #1C1C1C;
-    outline: none;
-    padding: 2px 4px;
-    border-radius: 3px;
-    transition: background .15s;
+    width: 100%; border: none; background: transparent; text-align: center;
+    font-size: 13px; font-family: inherit; color: #1C1C1C; outline: none;
+    padding: 2px 4px; border-radius: 3px; transition: background .15s;
   }
   td.name input:focus, td.year input:focus, td.note input:focus { background: #F0F4FF; outline: 2px solid #93C5FD; }
   td.year input { color: #555; }
   td.note { text-align: left; }
   td.note input { text-align: left; color: #888; font-size: 12px; }
   td.empty-val { color: #CCC; }
+
   tr.m10 { background: #FFFBEB !important; }
   tr.m5  { background: #F0FDF4 !important; }
   tr.m3  { background: #EFF6FF !important; }
   tr.m10:hover { background: #FEF3C7 !important; }
   tr.m5:hover  { background: #DCFCE7 !important; }
   tr.m3:hover  { background: #DBEAFE !important; }
+
   .badge-cell { display: flex; justify-content: center; }
+
   .milestone-panel { border-top: 1px solid #E8E8E8; padding: 20px 36px; background: #FAFAFA; }
   .milestone-panel h2 { font-size: 13px; font-weight: 700; color: #888; letter-spacing: .5px; text-transform: uppercase; margin-bottom: 14px; }
   .milestone-groups { display: flex; gap: 16px; flex-wrap: wrap; }
@@ -116,104 +145,240 @@
   .name-chip-green { background: #D1FAE5; color: #065F46; }
   .name-chip-blue  { background: #DBEAFE; color: #1E40AF; }
   .no-names { font-size: 12px; color: #CCC; line-height: 28px; }
-  .card-footer { padding: 14px 36px; border-top: 1px solid #E8E8E8; display: flex; align-items: center; justify-content: flex-end; flex-wrap: wrap; gap: 10px; }
+
+  .card-footer {
+    padding: 14px 36px; border-top: 1px solid #E8E8E8;
+    display: flex; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; gap: 10px;
+  }
   .btn { padding: 8px 18px; border: 1px solid #E0E0E0; background: #fff; border-radius: 4px; font-size: 12px; font-family: inherit; cursor: pointer; color: #555; transition: all .15s; }
   .btn:hover { background: #F5F5F5; border-color: #CCC; }
   .btn-dark { background: #1F1F1F; color: #fff; border-color: #1F1F1F; }
   .btn-dark:hover { background: #333; }
+
   @media print {
     body { background:#fff; padding:0; }
     .card { box-shadow:none; }
-    .card-footer .btn, .row-btn { display:none; }
+    .card-footer .btn, .row-btn, .sync-badge { display:none; }
     .milestone-panel { background: #fff; }
   }
 </style>
 </head>
 <body>
+
 <div class="card">
   <div class="card-header">
     <h1>근속교사 현황</h1>
     <div class="meta-bar">
-      <div class="meta-item">기준연도:&nbsp;<input class="meta-input" id="baseYear" type="number" value="2026" min="2000" max="2100" title="클릭해서 수정" /></div>
-      <div class="meta-item">교사 수:&nbsp;<strong id="rowCountDisplay">13</strong>명<div class="row-ctrl"><button class="row-btn" onclick="changeRows(-1)" title="행 삭제">−</button><button class="row-btn" onclick="changeRows(1)" title="행 추가">＋</button></div></div>
+      <div class="meta-item">
+        기준연도:&nbsp;
+        <input class="meta-input" id="baseYear" type="number" value="2026" min="2000" max="2100" title="클릭해서 수정" />
+      </div>
+      <div class="meta-item">
+        교사 수:&nbsp;<strong id="rowCountDisplay">13</strong>명
+        <div class="row-ctrl">
+          <button class="row-btn" onclick="changeRows(-1)" title="행 삭제">−</button>
+          <button class="row-btn" onclick="changeRows(1)"  title="행 추가">＋</button>
+        </div>
+      </div>
       <div class="meta-item">시작년도만 입력하면 자동 계산</div>
-      <div class="meta-item" style="border:none; gap:6px;"><span class="badge-gold">🏅 10년 이상</span><span class="badge-green">🎖 5년</span><span class="badge-blue">✅ 3년</span></div>
+      <div class="meta-item" style="gap:6px;">
+        <span class="badge-gold">🏅 10년 이상</span>
+        <span class="badge-green">🎖 5년</span>
+        <span class="badge-blue">✅ 3년</span>
+      </div>
     </div>
   </div>
+
   <div class="table-wrap">
     <table id="mainTable">
-      <thead><tr><th>NO.</th><th>이름</th><th>시작년도</th><th>근속연수</th><th>올해 연차</th><th>마일스톤</th><th style="text-align:left;padding-left:16px;">비고</th></tr></thead>
+      <thead>
+        <tr>
+          <th>NO.</th>
+          <th>이름</th>
+          <th>시작년도</th>
+          <th>근속연수</th>
+          <th>올해 연차</th>
+          <th>마일스톤</th>
+          <th style="text-align:left;padding-left:16px;">비고</th>
+        </tr>
+      </thead>
       <tbody id="tbody"></tbody>
     </table>
   </div>
+
   <div class="milestone-panel">
     <h2>마일스톤 요약</h2>
     <div class="milestone-groups">
-      <div class="milestone-group"><div class="milestone-group-header"><span class="badge-gold">🏅 10년 이상</span><div class="milestone-group-count"><span id="cnt10">0</span> <span>명</span></div></div><div class="milestone-names" id="names10"><span class="no-names">해당자 없음</span></div></div>
-      <div class="milestone-group"><div class="milestone-group-header"><span class="badge-green">🎖 5년</span><div class="milestone-group-count"><span id="cnt5">0</span> <span>명</span></div></div><div class="milestone-names" id="names5"><span class="no-names">해당자 없음</span></div></div>
-      <div class="milestone-group"><div class="milestone-group-header"><span class="badge-blue">✅ 3년</span><div class="milestone-group-count"><span id="cnt3">0</span> <span>명</span></div></div><div class="milestone-names" id="names3"><span class="no-names">해당자 없음</span></div></div>
+      <div class="milestone-group">
+        <div class="milestone-group-header">
+          <span class="badge-gold">🏅 10년 이상</span>
+          <div class="milestone-group-count"><span id="cnt10">0</span> <span>명</span></div>
+        </div>
+        <div class="milestone-names" id="names10"><span class="no-names">해당자 없음</span></div>
+      </div>
+      <div class="milestone-group">
+        <div class="milestone-group-header">
+          <span class="badge-green">🎖 5년</span>
+          <div class="milestone-group-count"><span id="cnt5">0</span> <span>명</span></div>
+        </div>
+        <div class="milestone-names" id="names5"><span class="no-names">해당자 없음</span></div>
+      </div>
+      <div class="milestone-group">
+        <div class="milestone-group-header">
+          <span class="badge-blue">✅ 3년</span>
+          <div class="milestone-group-count"><span id="cnt3">0</span> <span>명</span></div>
+        </div>
+        <div class="milestone-names" id="names3"><span class="no-names">해당자 없음</span></div>
+      </div>
     </div>
   </div>
-  <div class="card-footer"><div style="display:flex;gap:8px;"><button class="btn" onclick="clearAll()">초기화</button><button class="btn btn-dark" onclick="window.print()">🖨 인쇄</button></div></div>
+
+  <div class="card-footer">
+    <div id="syncBadge" class="sync-badge syncing">
+      <div class="sync-dot"></div>
+      <span id="syncText">연결 중...</span>
+    </div>
+    <div style="display:flex;gap:8px;">
+      <button class="btn" onclick="clearAll()">초기화</button>
+      <button class="btn btn-dark" onclick="window.print()">🖨 인쇄</button>
+    </div>
+  </div>
 </div>
+
 <script>
-  const KEY = 'geunsoek_v2';
-  function loadState() { try { const s = JSON.parse(localStorage.getItem(KEY)); return s || { baseYear: 2026, numRows: 13, rows: [] }; } catch { return { baseYear: 2026, numRows: 13, rows: [] }; } }
-  function saveState(s) { localStorage.setItem(KEY, JSON.stringify(s)); }
-  let state = loadState();
+  const firebaseConfig = {
+    apiKey: "AIzaSyBJK3KyNVJeSBOmU6BBZesdrodkS4MfT_4",
+    authDomain: "geunsoek-fed23.firebaseapp.com",
+    projectId: "geunsoek-fed23",
+    storageBucket: "geunsoek-fed23.firebasestorage.app",
+    messagingSenderId: "243271968223",
+    appId: "1:243271968223:web:44ad146696fcd7cabe506a"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const db      = firebase.firestore();
+  const docRef  = db.collection('state').doc('main');
+
+  let state = { baseYear: 2026, numRows: 13, rows: [] };
+  let saveTimer = null;
+
+  function setSyncStatus(status) {
+    const badge = document.getElementById('syncBadge');
+    const text  = document.getElementById('syncText');
+    badge.className = 'sync-badge ' + (status === 'connected' ? '' : status);
+    if (status === 'connected') text.textContent = '실시간 연결됨';
+    else if (status === 'syncing') text.textContent = '저장 중...';
+    else text.textContent = '오프라인';
+  }
+
+  function saveState(s) {
+    setSyncStatus('syncing');
+    if (saveTimer) clearTimeout(saveTimer);
+    saveTimer = setTimeout(() => {
+      const rows = [];
+      for (let i = 0; i < s.numRows; i++) {
+        const r = s.rows[i] || { name: '', year: '', note: '' };
+        rows.push({ name: r.name || '', year: r.year || '', note: r.note || '' });
+      }
+      docRef.set({ baseYear: s.baseYear, numRows: s.numRows, rows: rows })
+        .then(() => setSyncStatus('connected'))
+        .catch(() => setSyncStatus('offline'));
+    }, 600);
+  }
+
+  docRef.onSnapshot({ includeMetadataChanges: true }, snapshot => {
+    if (snapshot.metadata.hasPendingWrites) return;
+    if (snapshot.exists()) {
+      const data = snapshot.data();
+      state.baseYear = data.baseYear || 2026;
+      state.numRows  = data.numRows  || 13;
+      state.rows     = data.rows     || [];
+    }
+    render();
+    setSyncStatus('connected');
+  }, err => {
+    console.error('Firestore error:', err);
+    setSyncStatus('offline');
+  });
+
   function getMilestone(tenure) {
     if (tenure === null) return { text:'', cls:'', badge:'' };
     if (tenure >= 10) return { text:'🏅 10년 이상', cls:'m10', badge:'badge-gold' };
-    if (tenure === 5) return { text:'🎖 5년', cls:'m5', badge:'badge-green' };
-    if (tenure === 3) return { text:'✅ 3년', cls:'m3', badge:'badge-blue' };
+    if (tenure ===  5) return { text:'🎖 5년',       cls:'m5',  badge:'badge-green' };
+    if (tenure ===  3) return { text:'✅ 3년',       cls:'m3',  badge:'badge-blue' };
     return { text:'', cls:'', badge:'' };
   }
   function esc(v) { return String(v||'').replace(/"/g,'&quot;').replace(/</g,'&lt;'); }
+
   function render() {
     const YEAR = parseInt(state.baseYear) || new Date().getFullYear();
     document.getElementById('baseYear').value = YEAR;
     document.getElementById('rowCountDisplay').textContent = state.numRows;
+
     const tbody = document.getElementById('tbody');
     const focusedInput = document.activeElement;
-    const focusedIdx = focusedInput ? focusedInput.dataset.idx : null;
+    const focusedIdx   = focusedInput ? focusedInput.dataset.idx  : null;
     const focusedField = focusedInput ? focusedInput.dataset.field : null;
+
     tbody.innerHTML = '';
     let names10=[], names5=[], names3=[];
+
     for (let i = 0; i < state.numRows; i++) {
-      const d = state.rows[i] || { name:'', year:'', note:'' };
-      const yr = parseInt(d.year);
+      const d   = state.rows[i] || { name:'', year:'', note:'' };
+      const yr  = parseInt(d.year);
       const ten = (!isNaN(yr) && d.year !== '') ? YEAR - yr : null;
       const grd = ten !== null ? ten + 1 : null;
-      const ms = getMilestone(ten);
+      const ms  = getMilestone(ten);
+
       if (ms.cls==='m10' && d.name) names10.push(d.name);
-      if (ms.cls==='m5' && d.name) names5.push(d.name);
-      if (ms.cls==='m3' && d.name) names3.push(d.name);
+      if (ms.cls==='m5'  && d.name) names5.push(d.name);
+      if (ms.cls==='m3'  && d.name) names3.push(d.name);
+
       const tr = document.createElement('tr');
       if (ms.cls) tr.classList.add(ms.cls);
-      tr.innerHTML = '<td class="no">'+(i+1)+'</td><td class="name"><input type="text" placeholder="이름" value="'+esc(d.name)+'" data-idx="'+i+'" data-field="name" /></td><td class="year"><input type="number" placeholder="예) 2020" value="'+esc(d.year)+'" data-idx="'+i+'" data-field="year" min="1990" max="'+YEAR+'" /></td><td class="'+(ten===null?'empty-val':'')+'">'+( ten!==null ? ten+'년' : '—')+'</td><td class="'+(grd===null?'empty-val':'')+'">'+( grd!==null ? grd+'년차' : '—')+'</td><td><div class="badge-cell">'+( ms.text ? '<span class="'+ms.badge+'" style="font-size:12px;">'+ms.text+'</span>' : '<span style="color:#CCC;font-size:12px;">—</span>')+'</div></td><td class="note"><input type="text" placeholder="메모" value="'+esc(d.note)+'" data-idx="'+i+'" data-field="note" /></td>';
+
+      tr.innerHTML = `
+        <td class="no">${i+1}</td>
+        <td class="name"><input type="text"   placeholder="이름" value="${esc(d.name)}" data-idx="${i}" data-field="name" /></td>
+        <td class="year"><input type="number" placeholder="예) 2020" value="${esc(d.year)}" data-idx="${i}" data-field="year" min="1990" max="${YEAR}" /></td>
+        <td class="${ten===null?'empty-val':''}">${ten!==null ? ten+'년' : '—'}</td>
+        <td class="${grd===null?'empty-val':''}">${grd!==null ? grd+'년차' : '—'}</td>
+        <td><div class="badge-cell">${ms.text
+          ? `<span class="${ms.badge}" style="font-size:12px;">${ms.text}</span>`
+          : '<span style="color:#CCC;font-size:12px;">—</span>'}</div></td>
+        <td class="note"><input type="text" placeholder="메모" value="${esc(d.note)}" data-idx="${i}" data-field="note" /></td>
+      `;
       tbody.appendChild(tr);
     }
+
     updateSummaryPanel(names10, names5, names3);
+
     tbody.querySelectorAll('input').forEach(inp => {
       inp.addEventListener('input', onCellInput);
-      if (inp.dataset.idx === focusedIdx && inp.dataset.field === focusedField) { inp.focus(); const len = inp.value.length; inp.setSelectionRange(len, len); }
+      if (inp.dataset.idx === focusedIdx && inp.dataset.field === focusedField) {
+        inp.focus();
+        const len = inp.value.length;
+        inp.setSelectionRange(len, len);
+      }
     });
   }
+
   function updateSummaryPanel(n10, n5, n3) {
     document.getElementById('cnt10').textContent = n10.length;
-    document.getElementById('cnt5').textContent = n5.length;
-    document.getElementById('cnt3').textContent = n3.length;
+    document.getElementById('cnt5').textContent  = n5.length;
+    document.getElementById('cnt3').textContent  = n3.length;
     function renderNames(elId, names, chipClass) {
       const el = document.getElementById(elId);
       if (names.length === 0) { el.innerHTML = '<span class="no-names">해당자 없음</span>'; }
-      else { el.innerHTML = names.map(n => '<span class="name-chip '+chipClass+'">'+n+'</span>').join(''); }
+      else { el.innerHTML = names.map(n => `<span class="name-chip ${chipClass}">${n}</span>`).join(''); }
     }
     renderNames('names10', n10, 'name-chip-gold');
-    renderNames('names5', n5, 'name-chip-green');
-    renderNames('names3', n3, 'name-chip-blue');
+    renderNames('names5',  n5,  'name-chip-green');
+    renderNames('names3',  n3,  'name-chip-blue');
   }
+
   function onCellInput(e) {
-    const idx = parseInt(e.target.dataset.idx);
+    const idx   = parseInt(e.target.dataset.idx);
     const field = e.target.dataset.field;
     if (!state.rows[idx]) state.rows[idx] = { name:'', year:'', note:'' };
     state.rows[idx][field] = e.target.value;
@@ -221,23 +386,27 @@
     quickRefreshRow(idx);
     updateCounts();
   }
+
   function quickRefreshRow(idx) {
     const YEAR = parseInt(state.baseYear) || new Date().getFullYear();
-    const d = state.rows[idx] || {};
+    const d    = state.rows[idx] || {};
     const rows = document.querySelectorAll('#tbody tr');
-    const tr = rows[idx];
+    const tr   = rows[idx];
     if (!tr) return;
-    const yr = parseInt(d.year);
+    const yr  = parseInt(d.year);
     const ten = (!isNaN(yr) && d.year !== '') ? YEAR - yr : null;
     const grd = ten !== null ? ten+1 : null;
-    const ms = getMilestone(ten);
+    const ms  = getMilestone(ten);
     tr.className = ms.cls || '';
     tr.cells[3].textContent = ten!==null ? ten+'년' : '—';
-    tr.cells[3].className = ten===null ? 'empty-val' : '';
+    tr.cells[3].className   = ten===null ? 'empty-val' : '';
     tr.cells[4].textContent = grd!==null ? grd+'년차' : '—';
-    tr.cells[4].className = grd===null ? 'empty-val' : '';
-    tr.cells[5].innerHTML = ms.text ? '<div class="badge-cell"><span class="'+ms.badge+'" style="font-size:12px;">'+ms.text+'</span></div>' : '<div class="badge-cell"><span style="color:#CCC;font-size:12px;">—</span></div>';
+    tr.cells[4].className   = grd===null ? 'empty-val' : '';
+    tr.cells[5].innerHTML   = ms.text
+      ? `<div class="badge-cell"><span class="${ms.badge}" style="font-size:12px;">${ms.text}</span></div>`
+      : '<div class="badge-cell"><span style="color:#CCC;font-size:12px;">—</span></div>';
   }
+
   function updateCounts() {
     const YEAR = parseInt(state.baseYear) || new Date().getFullYear();
     let names10=[], names5=[], names3=[];
@@ -247,15 +416,21 @@
       const ten = (!isNaN(yr) && d.year !== '') ? YEAR - yr : null;
       const ms = getMilestone(ten);
       if (ms.cls==='m10' && d.name) names10.push(d.name);
-      if (ms.cls==='m5' && d.name) names5.push(d.name);
-      if (ms.cls==='m3' && d.name) names3.push(d.name);
+      if (ms.cls==='m5'  && d.name) names5.push(d.name);
+      if (ms.cls==='m3'  && d.name) names3.push(d.name);
     }
     updateSummaryPanel(names10, names5, names3);
   }
+
   document.getElementById('baseYear').addEventListener('change', function() {
     const val = parseInt(this.value);
-    if (!isNaN(val) && val >= 2000 && val <= 2100) { state.baseYear = val; saveState(state); render(); }
+    if (!isNaN(val) && val >= 2000 && val <= 2100) {
+      state.baseYear = val;
+      saveState(state);
+      render();
+    }
   });
+
   function changeRows(delta) {
     const next = state.numRows + delta;
     if (next < 1 || next > 50) return;
@@ -263,9 +438,15 @@
     saveState(state);
     render();
   }
+
   function clearAll() {
-    if (confirm('모든 데이터를 초기화할까요?')) { state.rows = []; saveState(state); render(); }
+    if (confirm('모든 데이터를 초기화할까요?')) {
+      state.rows = [];
+      saveState(state);
+      render();
+    }
   }
+
   render();
 </script>
 </body>
