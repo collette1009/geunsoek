@@ -1,847 +1,290 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>오희은 | 포트폴리오 · 에이블리코퍼레이션 고객 커뮤니케이션 운영기획 담당자</title>
-  <link rel="preconnect" href="https://cdn.jsdelivr.net">
-  <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.8/dist/web/static/pretendard.css" rel="stylesheet">
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    :root {
-      --white: #FFFFFF; --bg-soft: #F7F7F8; --bg-card: #F3F3F4;
-      --border: #E5E5E6; --border-hover: #282D32;
-      --text-1: #141416; --text-2: #50505A; --text-3: #909098;
-      --charcoal: #282D32; --charcoal-2: #1A1E21; --charcoal-a: rgba(40,45,50,0.07);
-      --sh-sm: 0 1px 4px rgba(0,0,0,0.06); --sh-md: 0 4px 20px rgba(0,0,0,0.09); --sh-lg: 0 12px 40px rgba(0,0,0,0.13);
-      --r: 10px; --r-sm: 6px; --ease: cubic-bezier(.4,0,.2,1); --t: 0.22s;
-    }
-    html { scroll-behavior: smooth; font-size: 16px; }
-    body { font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif; color: var(--text-1); background: var(--white); -webkit-font-smoothing: antialiased; line-height: 1.7; }
-    .wrap { max-width: 980px; margin: 0 auto; padding: 0 28px; }
-    .hr { width: 100%; height: 1px; background: var(--border); }
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>근속교사 현황표</title>
 
-    /* ── HEADER ── */
-    header { position: sticky; top: 0; z-index: 200; background: rgba(255,255,255,0.88); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border-bottom: 1px solid transparent; transition: border-color var(--t) var(--ease); }
-    header.on { border-bottom-color: var(--border); }
-    .h-inner { max-width: 980px; margin: 0 auto; padding: 0 28px; height: 62px; display: flex; align-items: center; justify-content: space-between; }
-    .logo { font-size: 16px; font-weight: 800; color: var(--charcoal); text-decoration: none; letter-spacing: -0.02em; }
-    nav { display: flex; gap: 30px; }
-    nav a { font-size: 14px; font-weight: 500; color: var(--text-2); text-decoration: none; transition: color var(--t); }
-    nav a:hover { color: var(--charcoal); }
-    .nav-toggle { display: none; width: 36px; height: 36px; border: none; background: none; cursor: pointer; flex-direction: column; align-items: center; justify-content: center; gap: 5px; }
-    .nav-toggle span { display: block; width: 20px; height: 2px; background: var(--charcoal); border-radius: 2px; transition: transform var(--t) var(--ease), opacity var(--t); }
-    .nav-toggle.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
-    .nav-toggle.open span:nth-child(2) { opacity: 0; }
-    .nav-toggle.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
-    @media (max-width: 800px) {
-      .nav-toggle { display: flex; }
-      nav { display: none; position: absolute; top: 62px; left: 0; right: 0; background: rgba(255,255,255,0.96); backdrop-filter: blur(16px); flex-direction: column; gap: 0; border-bottom: 1px solid var(--border); padding: 8px 0; }
-      nav.open { display: flex; }
-      nav a { padding: 14px 28px; font-size: 15px; }
-      nav a:hover { background: var(--bg-soft); }
-    }
+<!-- Firebase SDK (compat) -->
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
 
-    /* ── HERO ── */
-    .hero { padding: 96px 0 80px; position: relative; overflow: hidden; background-image: radial-gradient(circle, rgba(26,31,46,0.10) 1.5px, transparent 1px); background-size: 28px 28px; background-position: 14px 14px; }
-    .hero-eyebrow { display: inline-flex; align-items: center; gap: 10px; font-size: 12px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-3); margin-bottom: 24px; }
-    .hero-eyebrow-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--charcoal); }
-    .hero-name { font-size: clamp(52px, 7vw, 80px); font-weight: 800; letter-spacing: -0.04em; color: var(--charcoal); line-height: 1.0; margin-bottom: 10px; }
-    .hero-role { font-size: clamp(17px, 2.2vw, 20px); font-weight: 500; color: var(--text-2); letter-spacing: -0.01em; margin-bottom: 36px; }
-    .hero-tagline { position: relative; padding: 0 0 0 22px; margin-bottom: 48px; max-width: 660px; }
-    .hero-tagline::before { content: ''; position: absolute; left: 0; top: 4px; bottom: 4px; width: 3px; border-radius: 2px; background: var(--charcoal); }
-    .hero-tagline p { font-size: clamp(15px, 1.8vw, 17px); color: var(--text-1); line-height: 1.85; }
-    .hero-tagline strong { font-weight: 600; }
-    .hero-cta { display: flex; gap: 12px; flex-wrap: wrap; }
-
-    .btn { display: inline-flex; align-items: center; gap: 8px; padding: 13px 26px; font-size: 14px; font-weight: 600; border-radius: var(--r-sm); text-decoration: none; letter-spacing: -0.01em; transition: all var(--t) var(--ease); }
-    .btn svg { flex-shrink: 0; }
-    .btn-dark { background: var(--charcoal); color: var(--white); border: 1.5px solid var(--charcoal); }
-    .btn-dark:hover { background: var(--charcoal-2); border-color: var(--charcoal-2); transform: translateY(-1px); box-shadow: var(--sh-md); }
-    .btn-outline { background: transparent; color: var(--charcoal); border: 1.5px solid var(--border); }
-    .btn-outline:hover { border-color: var(--charcoal); background: var(--bg-card); transform: translateY(-1px); }
-
-    /* ── SECTIONS ── */
-    .sec { padding: 76px 0; }
-    .sec-alt { background: var(--bg-soft); }
-    .sec-eyebrow { font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-3); margin-bottom: 10px; }
-    .sec-title { font-size: clamp(22px, 3vw, 28px); font-weight: 700; letter-spacing: -0.025em; color: var(--charcoal); line-height: 1.3; margin-bottom: 40px; }
-
-    /* ── ABOUT ── */
-    .about-grid { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 56px; align-items: start; }
-    .about-text { font-size: 16px; color: var(--text-2); line-height: 1.9; }
-    .about-text strong { color: var(--text-1); font-weight: 600; }
-    .about-text p + p { margin-top: 18px; }
-    .about-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 28px; }
-    .chip { font-size: 12px; font-weight: 600; padding: 6px 14px; border-radius: 100px; background: var(--charcoal-a); color: var(--charcoal); letter-spacing: 0.01em; }
-    .about-sidebar { display: flex; flex-direction: column; gap: 14px; }
-    .sidebar-card { padding: 20px 22px; background: var(--white); border: 1.5px solid var(--border); border-radius: var(--r); }
-    .sidebar-card-top { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
-    .sidebar-icon { width: 30px; height: 30px; border-radius: var(--r-sm); background: var(--charcoal); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-    .sidebar-card-label { font-size: 13px; font-weight: 700; color: var(--text-1); }
-    .sidebar-card-desc { font-size: 13px; color: var(--text-2); line-height: 1.6; }
-
-    /* ── METRICS ── */
-    .metrics-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 14px; }
-    .m-card { background: var(--white); border: 1.5px solid var(--border); border-radius: var(--r); padding: 28px 18px; text-align: center; transition: box-shadow var(--t) var(--ease), transform var(--t) var(--ease), border-color var(--t); }
-    .m-card:hover { box-shadow: var(--sh-md); transform: translateY(-3px); border-color: var(--charcoal); }
-    .m-number { display: inline-block; font-size: 28px; font-weight: 800; color: var(--charcoal); letter-spacing: -0.03em; line-height: 1.1; margin-bottom: 8px; background: var(--charcoal-a); padding: 4px 14px; border-radius: 8px; }
-    .m-label { font-size: 13px; font-weight: 600; color: var(--text-1); margin-bottom: 6px; }
-    .m-sub { font-size: 11px; color: var(--text-3); line-height: 1.5; }
-
-    /* ── CASE CARDS ── */
-    .cases-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 18px; }
-    .c-card { background: var(--white); border: 1.5px solid var(--border); border-radius: var(--r); padding: 30px; display: flex; flex-direction: column; gap: 14px; text-decoration: none; color: inherit; transition: box-shadow var(--t) var(--ease), transform var(--t) var(--ease), border-color var(--t); cursor: pointer; }
-    .c-card:hover { box-shadow: var(--sh-md); transform: translateY(-3px); border-color: var(--charcoal); }
-    .c-tags { display: flex; gap: 7px; flex-wrap: wrap; }
-    .c-tag { font-size: 11px; font-weight: 600; color: var(--charcoal); background: var(--charcoal-a); padding: 4px 10px; border-radius: 100px; }
-    .c-tag.primary { background: var(--charcoal); color: var(--white); }
-    .c-title { font-size: 17px; font-weight: 700; color: var(--text-1); letter-spacing: -0.02em; line-height: 1.45; }
-    .c-desc { font-size: 14px; color: var(--text-2); line-height: 1.75; flex: 1; }
-    .c-bottom { display: flex; align-items: center; justify-content: space-between; padding-top: 16px; border-top: 1px solid var(--border); margin-top: auto; }
-    .c-metric { display: flex; flex-direction: column; gap: 2px; }
-    .c-metric-val { display: inline-block; font-size: 18px; font-weight: 800; color: var(--charcoal); letter-spacing: -0.02em; background: var(--charcoal-a); padding: 2px 10px; border-radius: 6px; }
-    .c-metric-lab { font-size: 11px; color: var(--text-3); }
-    .c-arrow { width: 32px; height: 32px; border-radius: 50%; border: 1.5px solid var(--border); display: flex; align-items: center; justify-content: center; color: var(--charcoal); flex-shrink: 0; transition: background var(--t), border-color var(--t), transform var(--t); }
-    .c-card:hover .c-arrow { background: var(--charcoal); border-color: var(--charcoal); color: var(--white); transform: translateX(3px); }
-
-    /* ── MODAL ── */
-    .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.55); z-index: 500; align-items: center; justify-content: center; padding: 20px; backdrop-filter: blur(4px); }
-    .modal-overlay.open { display: flex; }
-    .modal { background: var(--white); border-radius: 16px; max-width: 720px; width: 100%; max-height: 88vh; overflow-y: auto; box-shadow: var(--sh-lg); animation: modalIn 0.25s var(--ease); }
-    @keyframes modalIn { from { opacity:0; transform: translateY(16px); } to { opacity:1; transform: none; } }
-    .modal-head { padding: 32px 36px 24px; border-bottom: 1px solid var(--border); position: sticky; top: 0; background: var(--white); z-index: 1; display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; }
-    .modal-close { width: 32px; height: 32px; border-radius: 50%; border: 1.5px solid var(--border); background: none; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: background var(--t), border-color var(--t); }
-    .modal-close:hover { background: var(--bg-card); border-color: var(--charcoal); }
-    .modal-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px; }
-    .modal-title { font-size: 20px; font-weight: 700; color: var(--text-1); letter-spacing: -0.02em; line-height: 1.4; }
-    .modal-sub { font-size: 13px; color: var(--text-3); margin-top: 6px; }
-    .modal-body { padding: 28px 36px 36px; display: flex; flex-direction: column; gap: 24px; }
-    .modal-section { display: flex; flex-direction: column; gap: 8px; }
-    .modal-section-label { font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-3); }
-    .modal-section-text { font-size: 15px; color: var(--text-2); line-height: 1.8; }
-    .modal-section-text strong { color: var(--text-1); font-weight: 600; }
-    .modal-ul { list-style: none; padding: 0; display: flex; flex-direction: column; gap: 8px; }
-    .modal-ul li { font-size: 15px; color: var(--text-2); line-height: 1.75; padding-left: 16px; position: relative; }
-    .modal-ul li::before { content: ''; position: absolute; left: 0; top: 10px; width: 5px; height: 5px; border-radius: 50%; background: var(--charcoal); flex-shrink: 0; }
-    .modal-result { background: var(--charcoal); border-radius: 10px; padding: 20px 24px; display: flex; align-items: center; gap: 20px; }
-    .modal-result-num { font-size: 26px; font-weight: 800; color: var(--white); letter-spacing: -0.03em; white-space: nowrap; }
-    .modal-result-desc { font-size: 13px; color: rgba(255,255,255,0.75); line-height: 1.6; }
-    .modal-table { width: 100%; border-collapse: collapse; font-size: 13.5px; overflow: hidden; border-radius: 8px; border: 1px solid var(--border); }
-    .modal-table thead tr { background: var(--charcoal); color: var(--white); }
-    .modal-table thead th { padding: 10px 14px; text-align: left; font-weight: 600; font-size: 12px; }
-    .modal-table tbody td { padding: 10px 14px; border-bottom: 1px solid var(--border); color: var(--text-2); vertical-align: top; }
-    .modal-table tbody tr:last-child td { border-bottom: none; }
-    .modal-table tbody td:first-child { font-weight: 600; color: var(--text-1); background: var(--bg-soft); white-space: nowrap; }
-    @media (max-width: 600px) { .modal-head { padding: 24px 20px 20px; } .modal-body { padding: 20px 20px 28px; } .modal-title { font-size: 17px; } }
-
-    /* ── JD MATCH ── */
-    .jd-grid { display: flex; flex-direction: column; gap: 16px; }
-    .jd-item { display: grid; grid-template-columns: 1fr 1fr; gap: 0; border: 1.5px solid var(--border); border-radius: var(--r); overflow: hidden; transition: border-color var(--t) var(--ease), box-shadow var(--t) var(--ease); }
-    .jd-item:hover { border-color: var(--border-hover); box-shadow: var(--sh-md); }
-    .jd-left { background: var(--charcoal); color: var(--white); padding: 28px 32px; display: flex; flex-direction: column; gap: 10px; }
-    .jd-num { font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(255,255,255,0.45); }
-    .jd-req { font-size: 15px; font-weight: 600; line-height: 1.55; color: var(--white); }
-    .jd-keyword-row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
-    .jd-kw { font-size: 11px; font-weight: 600; background: rgba(255,255,255,0.12); color: rgba(255,255,255,0.75); padding: 3px 9px; border-radius: 20px; }
-    .jd-right { background: var(--white); padding: 28px 32px; display: flex; flex-direction: column; gap: 10px; }
-    .jd-match-label { font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-3); }
-    .jd-match-title { font-size: 14px; font-weight: 700; color: var(--text-1); line-height: 1.5; }
-    .jd-match-points { display: flex; flex-direction: column; gap: 8px; margin-top: 4px; }
-    .jd-match-point { display: flex; align-items: flex-start; gap: 10px; font-size: 13px; color: var(--text-2); line-height: 1.6; }
-    .jd-match-point::before { content: ''; width: 4px; height: 4px; border-radius: 50%; background: var(--charcoal); flex-shrink: 0; margin-top: 8px; }
-    @media (max-width: 680px) { .jd-item { grid-template-columns: 1fr; } }
-
-    /* ── FOOTER ── */
-    footer { padding: 60px 0; border-top: 1px solid var(--border); }
-    .footer-grid { display: flex; justify-content: space-between; align-items: center; gap: 24px; flex-wrap: wrap; }
-    .footer-name { font-size: 22px; font-weight: 800; color: var(--charcoal); letter-spacing: -0.03em; margin-bottom: 4px; }
-    .footer-sub { font-size: 14px; color: var(--text-3); }
-
-    /* ── FADE-IN ── */
-    .fi { opacity: 0; transform: translateY(20px); transition: opacity 0.55s var(--ease), transform 0.55s var(--ease); }
-    .fi.show { opacity: 1; transform: none; }
-    .fi:nth-child(2) { transition-delay: 0.08s; }
-    .fi:nth-child(3) { transition-delay: 0.16s; }
-    .fi:nth-child(4) { transition-delay: 0.24s; }
-
-    @media (max-width: 800px) {
-      .about-grid { grid-template-columns: 1fr; gap: 36px; }
-      .metrics-grid { grid-template-columns: repeat(2,1fr); }
-      .cases-grid { grid-template-columns: 1fr; }
-      .footer-grid { flex-direction: column; align-items: flex-start; }
-    }
-    @media (max-width: 680px) {
-      .jd-item { grid-template-columns: 1fr; }
-      .jd-left { padding: 20px 20px 16px; }
-      .jd-right { padding: 16px 20px 20px; }
-      .modal-table { font-size: 12px; }
-      .modal-table thead th,
-      .modal-table tbody td { padding: 8px 10px; }
-      .modal-table tbody td:first-child { white-space: normal; min-width: 70px; }
-    }
-    @media (max-width: 600px) {
-      .modal-head { padding: 24px 20px 20px; }
-      .modal-body { padding: 20px 20px 28px; }
-      .modal-title { font-size: 17px; }
-      .modal-result { flex-direction: column; gap: 10px; align-items: flex-start; }
-      .modal-result-num { font-size: 22px; }
-      .c-title { font-size: 15px; }
-      .c-metric-val { font-size: 16px; }
-      .hero { padding: 60px 0 48px; }
-      .hero-name { font-size: 42px; }
-      .hero-role { font-size: 15px; }
-      .hero-tagline { margin-bottom: 32px; }
-      .sec { padding: 52px 0; }
-      .sec-title { font-size: 20px; margin-bottom: 28px; }
-      .m-number { font-size: 22px; }
-      .m-card { padding: 20px 14px; }
-      .about-text { font-size: 15px; }
-      .footer-name { font-size: 18px; }
-      .footer-grid > div:last-child { align-items: flex-start; width: 100%; }
-    }
-    @media (max-width: 500px) {
-      .hero-cta { flex-direction: column; }
-      .btn { justify-content: center; }
-      .wrap { padding: 0 18px; }
-      .metrics-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
-      .hero-eyebrow { font-size: 10px; }
-      .about-chips { gap: 6px; }
-      .chip { font-size: 11px; padding: 5px 11px; }
-    }
-  </style>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif; background: #F2F2F2; colohhr: #1C1C1C; min-height: 100vh; padding: 40px 20px 80px; }
+  .card { max-width: 900px; margin: 0 auto; background: #fff; border-radius: 4px; box-shadow: 0 1px 6px rgba(0,0,0,.08); overflow: hidden; }
+  .card-header { padding: 32px 36px 20px; border-bottom: 1px solid #E8E8E8; }
+  .card-header h1 { font-size: 24px; font-weight: 700; letter-spacing: -0.5px; }
+  .meta-bar { margin-top: 12px; display: flex; align-items: center; flex-wrap: wrap; gap: 8px 0; font-size: 12px; color: #888; }
+  .meta-item { display: flex; align-items: center; padding: 0 12px; border-right: 1px solid #E0E0E0; gap: 4px; }
+  .meta-item:first-child { padding-left: 0; }
+  .meta-item:last-child  { border-right: none; }
+  .meta-input { width: 52px; border: none; border-bottom: 1.5px dashed #AAAAAA; background: transparent; font-size: 12px; font-weight: 700; color: #1C1C1C; font-family: inherit; text-align: center; padding: 1px 2px; outline: none; transition: border-color .15s; cursor: pointer; }
+  .meta-input:focus { border-bottom-color: #1F1F1F; background: #F5F5F5; border-radius: 2px 2px 0 0; }
+  .badge-gold  { display:inline-flex;align-items:center;gap:4px;background:#FBBF24;color:#7C2D12;padding:2px 9px;border-radius:20px;font-size:11px;font-weight:600; }
+  .badge-green { display:inline-flex;align-items:center;gap:4px;background:#34D399;color:#064E3B;padding:2px 9px;border-radius:20px;font-size:11px;font-weight:600; }
+  .badge-blue  { display:inline-flex;align-items:center;gap:4px;background:#60A5FA;color:#1E3A5F;padding:2px 9px;border-radius:20px;font-size:11px;font-weight:600; }
+  .row-ctrl { display: flex; align-items: center; gap: 6px; padding: 0 0 0 12px; border-left: 1px solid #E0E0E0; }
+  .row-btn { width: 24px; height: 24px; border: 1px solid #DDD; background: #fff; border-radius: 4px; font-size: 15px; line-height: 1; cursor: pointer; color: #555; display: flex; align-items: center; justify-content: center; transition: all .15s; }
+  .row-btn:hover { background: #F0F0F0; border-color: #AAA; }
+  .sync-badge { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; padding: 2px 8px; border-radius: 20px; background: #F0FDF4; color: #065F46; font-weight: 500; transition: all .3s; }
+  .sync-badge.syncing { background: #FFF7ED; color: #92400E; }
+  .sync-badge.offline { background: #FEF2F2; color: #991B1B; }
+  .sync-dot { width: 6px; height: 6px; border-radius: 50%; background: #34D399; transition: background .3s; }
+  .sync-badge.syncing .sync-dot { background: #F59E0B; animation: pulse 1s infinite; }
+  .sync-badge.offline .sync-dot { background: #EF4444; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
+  .table-wrap { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  thead tr { background: #1F1F1F; color: #fff; }
+  thead th { padding: 12px 14px; text-align: center; font-weight: 600; font-size: 12px; letter-spacing: .3px; white-space: nowrap; }
+  tbody tr { border-bottom: 1px solid #F0F0F0; transition: background .12s; }
+  tbody tr:last-child { border-bottom: none; }
+  tbody tr:nth-child(even) { background: #FAFAFA; }
+  tbody tr:hover { background: #F5F5F5 !important; }
+  td { padding: 10px 14px; text-align: center; color: #333; }
+  td.no { color: #AAAAAA; font-size: 12px; width: 44px; }
+  td.name input, td.year input, td.note input { width: 100%; border: none; background: transparent; text-align: center; font-size: 13px; font-family: inherit; color: #1C1C1C; outline: none; padding: 2px 4px; border-radius: 3px; transition: background .15s; }
+  td.name input:focus, td.year input:focus, td.note input:focus { background: #F0F4FF; outline: 2px solid #93C5FD; }
+  td.year input { color: #555; }
+  td.note { text-align: left; }
+  td.note input { text-align: left; color: #888; font-size: 12px; }
+  td.empty-val { color: #CCC; }
+  tr.m10 { background: #FFFBEB !important; }
+  tr.m5  { background: #F0FDF4 !important; }
+  tr.m3  { background: #EFF6FF !important; }
+  tr.m10:hover { background: #FEF3C7 !important; }
+  tr.m5:hover  { background: #DCFCE7 !important; }
+  tr.m3:hover  { background: #DBEAFE !important; }
+  .badge-cell { display: flex; justify-content: center; }
+  .milestone-panel { border-top: 1px solid #E8E8E8; padding: 20px 36px; background: #FAFAFA; }
+  .milestone-panel h2 { font-size: 13px; font-weight: 700; color: #888; letter-spacing: .5px; text-transform: uppercase; margin-bottom: 14px; }
+  .milestone-groups { display: flex; gap: 16px; flex-wrap: wrap; }
+  .milestone-group { flex: 1; min-width: 200px; background: #fff; border: 1px solid #EBEBEB; border-radius: 6px; padding: 14px 16px; }
+  .milestone-group-header { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+  .milestone-group-count { margin-left: auto; font-size: 18px; font-weight: 700; color: #1C1C1C; }
+  .milestone-group-count span { font-size: 11px; font-weight: 400; color: #888; }
+  .milestone-names { display: flex; flex-wrap: wrap; gap: 6px; min-height: 28px; }
+  .name-chip { font-size: 12px; padding: 3px 10px; border-radius: 20px; font-weight: 500; }
+  .name-chip-gold  { background: #FEF3C7; color: #92400E; }
+  .name-chip-green { background: #D1FAE5; color: #065F46; }
+  .name-chip-blue  { background: #DBEAFE; color: #1E40AF; }
+  .no-names { font-size: 12px; color: #CCC; line-height: 28px; }
+  .card-footer { padding: 14px 36px; border-top: 1px solid #E8E8E8; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; }
+  .btn { padding: 8px 18px; border: 1px solid #E0E0E0; background: #fff; border-radius: 4px; font-size: 12px; font-family: inherit; cursor: pointer; color: #555; transition: all .15s; }
+  .btn:hover { background: #F5F5F5; border-color: #CCC; }
+  .btn-dark { background: #1F1F1F; color: #fff; border-color: #1F1F1F; }
+  .btn-dark:hover { background: #333; }
+  @media print { body { background:#fff; padding:0; } .card { box-shadow:none; } .card-footer .btn, .row-btn, .sync-badge { display:none; } .milestone-panel { background: #fff; } }
+</style>
 </head>
 <body>
-
-<header id="hd">
-  <div class="h-inner">
-    <a href="#" class="logo">오희은</a>
-    <nav id="nav">
-      <a href="#about">소개</a>
-      <a href="#cases">케이스 스터디</a>
-      <a href="#jd">요건 매칭</a>
-      <a href="#contact">연락하기</a>
-    </nav>
-    <button class="nav-toggle" id="navToggle" aria-label="메뉴">
-      <span></span><span></span><span></span>
-    </button>
-  </div>
-</header>
-
-<!-- HERO -->
-<section class="hero">
-  <div class="wrap">
-    <div class="hero-eyebrow">
-      <span class="hero-eyebrow-dot"></span>
-      에이블리코퍼레이션 · 고객 커뮤니케이션 운영기획 담당자 지원
-    </div>
-    <h1 class="hero-name">오희은</h1>
-    <p class="hero-role">고객지원센터의 운영 기준을 데이터로 설계하고 실행해왔습니다</p>
-    <div class="hero-tagline">
-      <p>
-        WFM·SLA·BPO 운영 기준이 없는 상황에서 <strong>기준을 만들고,</strong> VOC 데이터로 원인을 규명해 <strong>반복 문의를 구조적으로 제거</strong>해왔습니다.<br><br>
-        빠르게 성장하는 스타일 커머스 플랫폼에서 고객 커뮤니케이션의 품질과 속도가 서비스 신뢰에 직접 연결되는 환경임을 알고 있습니다. 에이블리 고객지원센터의 <strong>WFM 구축과 SLA 설계에 기여하겠습니다.</strong>
-      </p>
-    </div>
-    <div class="hero-cta">
-      <a href="#cases" class="btn btn-dark">
-        케이스 스터디 보기
-        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2.5 7H11.5M8 3.5L11.5 7L8 10.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      </a>
-      <a href="#jd" class="btn btn-outline">
-        요건 매칭 확인하기
-        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2.5 7H11.5M8 3.5L11.5 7L8 10.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      </a>
+<div class="card">
+  <div class="card-header">
+    <h1>근속교사 현황</h1>
+    <div class="meta-bar">
+      <div class="meta-item">기준연도:&nbsp;<input class="meta-input" id="baseYear" type="number" value="2026" min="2000" max="2100" title="클릭해서 수정" /></div>
+      <div class="meta-item">교사 수:&nbsp;<strong id="rowCountDisplay">13</strong>명<div class="row-ctrl"><button class="row-btn" onclick="changeRows(-1)" title="행 삭제">−</button><button class="row-btn" onclick="changeRows(1)" title="행 추가">＋</button></div></div>
+      <div class="meta-item">시작년도만 입력하면 자동 계산</div>
+      <div class="meta-item" style="gap:6px;"><span class="badge-gold">🏅 10년 이상</span><span class="badge-green">🎖 5년</span><span class="badge-blue">✅ 3년</span></div>
     </div>
   </div>
-</section>
-
-<div class="wrap"><div class="hr"></div></div>
-
-<!-- ABOUT -->
-<section class="sec" id="about">
-  <div class="wrap">
-    <p class="sec-eyebrow">About</p>
-    <h2 class="sec-title">기준이 없는 상황에서<br>WFM·SLA·운영 체계를 처음부터 만들어왔습니다</h2>
-    <div class="about-grid">
-      <div>
-        <div class="about-text fi">
-          <p>
-            기업 회생 절차 이후 CS 전담 인력 이탈로 타부서 순환 지원 인력이 투입된 상황에서, 인입량·업무 난이도·숙련도를 기준으로 <strong>담당 범위와 처리 우선순위를 설계했습니다.</strong> 에스컬레이션 기준·처리 SOP·리드타임 기준을 수립해 타부서 순환 지원 인력도 동일 기준으로 처리할 수 있도록 문서화, BPO 운영에도 전환 가능한 표준 기준을 만들었습니다.
-          </p>
-          <p>
-            VOC 173건을 전수 분류해 82% 동일 원인을 규명하고 운영 정책을 직접 수립해 반복 인입을 96% 줄였습니다. 배송 문의 패턴에서 UX 구조 문제를 발견해 <strong>개발팀에 제안·구현, 관련 문의를 0건으로 만들었습니다.</strong>
-          </p>
-          <p>
-            CRM 상태값 구조 재설계로 처리 누락 방지, 고객 재확인 왕복 95%+ 제거를 달성했습니다. Claude로 Chrome Extension을 직접 구현해 재배송·반품 처리를 8단계→2단계로 단축, <strong>1,151건을 단독 처리했습니다.</strong>
-          </p>
-        </div>
-        <div class="about-chips fi">
-          <span class="chip">WFM 관점 인력 배치 설계</span>
-          <span class="chip">SLA 직접 설계·운영</span>
-          <span class="chip">VOC 데이터 기반 원인 규명</span>
-          <span class="chip">BPO 전환 가능한 표준 기준</span>
-          <span class="chip">CRM 구조 개선</span>
-          <span class="chip">AI · 자동화 실무 적용</span>
-        </div>
-      </div>
-      <div class="about-sidebar">
-        <div class="sidebar-card fi">
-          <div class="sidebar-card-top">
-            <div class="sidebar-icon">
-              <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 4h8M3 7h6M3 10h4" stroke="white" stroke-width="1.4" stroke-linecap="round"/></svg>
-            </div>
-            <span class="sidebar-card-label">기준이 없는 상황이 기회다</span>
-          </div>
-          <p class="sidebar-card-desc">기준이 없으면 혼선이 반복됩니다. 운영 기준을 처음부터 설계하는 것은 어렵지만, 그 기준이 정착되면 조직 전체가 흔들리지 않습니다.</p>
-        </div>
-        <div class="sidebar-card fi">
-          <div class="sidebar-card-top">
-            <div class="sidebar-icon">
-              <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 11L5 7l2.5 2.5L10 5l2 3" stroke="white" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            </div>
-            <span class="sidebar-card-label">데이터로 말해야 구조가 바뀐다</span>
-          </div>
-          <p class="sidebar-card-desc">VOC 173건 전수 분류, 배송 문의 패턴 분석을 통해 데이터로 원인을 규명해야 개선이 제안이 아닌 실행으로 연결됩니다.</p>
-        </div>
-        <div class="sidebar-card fi">
-          <div class="sidebar-card-top">
-            <div class="sidebar-icon">
-              <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="2" y="3" width="10" height="8" rx="1.5" stroke="white" stroke-width="1.4"/><path d="M5 6.5h4M5 8.5h2.5" stroke="white" stroke-width="1.2" stroke-linecap="round"/></svg>
-            </div>
-            <span class="sidebar-card-label">실제 사용자로서 에이블리를 압니다</span>
-          </div>
-          <p class="sidebar-card-desc">의류·잡화를 정기적으로 구매하는 에이블리 고객입니다. 리뷰 하단 '함께 코디한 상품' 기능처럼 고객 여정의 디테일을 경험자로서 이해하고 있습니다.</p>
-        </div>
-      </div>
+  <div class="table-wrap">
+    <table id="mainTable">
+      <thead><tr><th>NO.</th><th>이름</th><th>시작년도</th><th>근속연수</th><th>올해 연차</th><th>마일스톤</th><th style="text-align:left;padding-left:16px;">비고</th></tr></thead>
+      <tbody id="tbody"></tbody>
+    </table>
+  </div>
+  <div class="milestone-panel">
+    <h2>마일스톤 요약</h2>
+    <div class="milestone-groups">
+      <div class="milestone-group"><div class="milestone-group-header"><span class="badge-gold">🏅 10년 이상</span><div class="milestone-group-count"><span id="cnt10">0</span> <span>명</span></div></div><div class="milestone-names" id="names10"><span class="no-names">해당자 없음</span></div></div>
+      <div class="milestone-group"><div class="milestone-group-header"><span class="badge-green">🎖 5년</span><div class="milestone-group-count"><span id="cnt5">0</span> <span>명</span></div></div><div class="milestone-names" id="names5"><span class="no-names">해당자 없음</span></div></div>
+      <div class="milestone-group"><div class="milestone-group-header"><span class="badge-blue">✅ 3년</span><div class="milestone-group-count"><span id="cnt3">0</span> <span>명</span></div></div><div class="milestone-names" id="names3"><span class="no-names">해당자 없음</span></div></div>
     </div>
   </div>
-</section>
-
-<div class="wrap"><div class="hr"></div></div>
-
-<!-- METRICS -->
-<section class="sec" id="metrics">
-  <div class="wrap">
-    <p class="sec-eyebrow">Key Results</p>
-    <h2 class="sec-title">운영 기준을 설계하고 실행해 만든 수치들</h2>
-    <div class="metrics-grid">
-      <div class="m-card fi">
-        <div class="m-number">96%</div>
-        <div class="m-label">VOC 반복 인입 감소</div>
-        <div class="m-sub">월 106건 → 4건<br>전수 분류 → 원인 규명 → 정책 수립</div>
-      </div>
-      <div class="m-card fi">
-        <div class="m-number">95%+</div>
-        <div class="m-label">고객 재확인 왕복 제거</div>
-        <div class="m-sub">SLA 설계 + CRM 구조 재설계<br>리드타임 단축 · 처리 누락 방지</div>
-      </div>
-      <div class="m-card fi">
-        <div class="m-number">누적 7명</div>
-        <div class="m-label">지원 인력 운영 기준 설계</div>
-        <div class="m-sub">인입량·난이도·숙련도 기준<br>담당 범위·처리 우선순위 표준화</div>
-      </div>
-      <div class="m-card fi">
-        <div class="m-number">8→2</div>
-        <div class="m-label">운영 처리 단계 단축</div>
-        <div class="m-sub">Chrome Extension 직접 구현<br>1,151건 단독 처리</div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<div class="wrap"><div class="hr"></div></div>
-
-<!-- CASES -->
-<section class="sec sec-alt" id="cases">
-  <div class="wrap">
-    <p class="sec-eyebrow">Case Studies</p>
-    <h2 class="sec-title">운영 기준을 만들고 수치로 증명한 사례들</h2>
-    <div class="cases-grid">
-
-      <div class="c-card" onclick="openModal('m1')">
-        <div class="c-tags">
-          <span class="c-tag primary">WFM 관점 인력 배치</span>
-          <span class="c-tag">담당 범위·우선순위 설계</span>
-          <span class="c-tag">BPO 전환 가능한 기준</span>
-        </div>
-        <div class="c-title">기업 회생 절차 이후 타부서 순환 지원 인력이 투입된 상황에서 인입량·업무 난이도·숙련도 기준으로 담당 범위와 처리 우선순위를 설계</div>
-        <div class="c-desc">기업 회생 절차 이후 CS 전담 인력 이탈로 타부서 순환 지원 인력 7명이 투입된 상황. 담당 범위·처리 우선순위·SOP·에스컬레이션 기준을 직접 설계해 운영 연속성을 확보했습니다.</div>
-        <div class="c-bottom">
-          <div class="c-metric">
-            <span class="c-metric-val">누적 7명</span>
-            <span class="c-metric-lab">동일 운영 기준 적용</span>
-          </div>
-          <div class="c-arrow">
-            <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2.5 7H11.5M8 3.5L11.5 7L8 10.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          </div>
-        </div>
-      </div>
-
-      <div class="c-card" onclick="openModal('m2')">
-        <div class="c-tags">
-          <span class="c-tag primary">SLA · 운영 지표 설계</span>
-          <span class="c-tag">CRM 구조 개선</span>
-          <span class="c-tag">리드타임 단축</span>
-        </div>
-        <div class="c-title">에스컬레이션 기준·처리 SOP·리드타임 기준 설계로 SLA 운영 체계 구축</div>
-        <div class="c-desc">처리 기준·에스컬레이션 구조가 없던 상황에서 SLA를 직접 설계하고 CRM 구조를 재설계해 고객 재확인 왕복 95%+ 제거, 처리 누락 방지 구조를 완성했습니다.</div>
-        <div class="c-bottom">
-          <div class="c-metric">
-            <span class="c-metric-val">95%+</span>
-            <span class="c-metric-lab">고객 재확인 왕복 제거</span>
-          </div>
-          <div class="c-arrow">
-            <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2.5 7H11.5M8 3.5L11.5 7L8 10.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          </div>
-        </div>
-      </div>
-
-      <div class="c-card" onclick="openModal('m3')">
-        <div class="c-tags">
-          <span class="c-tag primary">데이터 기반 운영 개선</span>
-          <span class="c-tag">VOC 분석</span>
-          <span class="c-tag">반복 인입 차단</span>
-        </div>
-        <div class="c-title">VOC 173건 전수 분류 → 구조적 원인 규명 → 반복 인입 96% 감소</div>
-        <div class="c-desc">프로모션 오인 문의가 월 100건 이상 반복되던 상황에서 전수 분류로 82% 동일 원인을 규명, 운영 정책 수립과 UX 개선을 병행해 구조적으로 차단했습니다.</div>
-        <div class="c-bottom">
-          <div class="c-metric">
-            <span class="c-metric-val">96%</span>
-            <span class="c-metric-lab">반복 인입 감소</span>
-          </div>
-          <div class="c-arrow">
-            <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2.5 7H11.5M8 3.5L11.5 7L8 10.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          </div>
-        </div>
-      </div>
-
-      <div class="c-card" onclick="openModal('m4')">
-        <div class="c-tags">
-          <span class="c-tag primary">운영 자동화 · AI 활용</span>
-          <span class="c-tag">생산성 개선</span>
-          <span class="c-tag">데이터 정합성</span>
-        </div>
-        <div class="c-title">Chrome Extension 구현 · 처리 단계 8→2 단축 · 귀책 기준값 자동 반영으로 정합성 확보</div>
-        <div class="c-desc">Claude를 활용해 Chrome Extension을 직접 구현, 재배송·반품 처리 단계를 대폭 단축하고 1,151건을 단독 처리했습니다. 비개발 직군 유일 AI 업무비 공식 승인.</div>
-        <div class="c-bottom">
-          <div class="c-metric">
-            <span class="c-metric-val">1,151건</span>
-            <span class="c-metric-lab">단독 처리 완료</span>
-          </div>
-          <div class="c-arrow">
-            <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2.5 7H11.5M8 3.5L11.5 7L8 10.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          </div>
-        </div>
-      </div>
-
-    </div>
-  </div>
-</section>
-
-<!-- ── MODALS ── -->
-
-<!-- MODAL 1: WFM -->
-<div class="modal-overlay" id="m1" onclick="closeModal(event,'m1')">
-  <div class="modal">
-    <div class="modal-head">
-      <div>
-        <div class="modal-tags">
-          <span class="c-tag primary">WFM 관점 인력 배치</span>
-          <span class="c-tag">담당 범위·우선순위 설계</span>
-          <span class="c-tag">BPO 전환 가능한 기준</span>
-        </div>
-        <div class="modal-title">CS 조직 공백 상황에서 인입량·업무 난이도·숙련도 기준으로 담당 범위와 처리 우선순위를 설계</div>
-        <div class="modal-sub">초록마을 · 2024.12 – 재직 중</div>
-      </div>
-      <button class="modal-close" onclick="closeModalBtn('m1')">
-        <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M1 1l10 10M11 1L1 11" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
-      </button>
-    </div>
-    <div class="modal-body">
-      <div class="modal-section">
-        <div class="modal-section-label">Problem</div>
-        <div class="modal-section-text">
-          기업 회생 절차 이후 CS 전담 인력이 이탈하고 타부서 순환 지원 인력이 즉시 투입되어야 하는 상황이었습니다. 인력 기준·판단 가이드·에스컬레이션 구조가 없는 상태에서 WFM 체계 없이 인력이 배치되면 응대 편차와 처리 누락이 불가피했습니다.
-        </div>
-      </div>
-      <div class="modal-section">
-        <div class="modal-section-label">Action</div>
-        <ul class="modal-ul">
-          <li>인입량·업무 난이도·숙련도를 기준으로 담당 범위를 구분했습니다. <strong>단순 문의는 지원 인력이 처리</strong>하고, 환불·보상·민감 이슈처럼 판단 기준이 필요한 건은 검수 후 직접 판단하는 구조로 분리</li>
-          <li>이슈 유형별 처리 SOP·에스컬레이션 기준·검수 기준을 문서화해 타부서 순환 지원 인력도 <strong>동일 기준으로 처리할 수 있는 구조 완성.</strong> BPO 운영으로 확장 가능한 표준 기준으로 설계</li>
-          <li>'상황 정리 → 위험 포인트 → 권장 문구 → 다음 조치' 4단계 피드백 체계로 신규 인력 독립 처리 기간 단축</li>
-          <li>배송 대량 지연 발생 시 재배송·취소·대기 기준을 즉시 수립·공유해 채널 전체 대응 기준 일원화</li>
-        </ul>
-      </div>
-      <div class="modal-section">
-        <div class="modal-section-label">Before / After</div>
-        <table class="modal-table">
-          <thead><tr><th>항목</th><th>Before</th><th>After</th></tr></thead>
-          <tbody>
-            <tr><td>인력 배치 기준</td><td>없음 (인원 확보 후 즉시 투입)</td><td>인입량·업무 난이도·숙련도 기준 배치 범위 설계</td></tr>
-            <tr><td>처리 기준</td><td>개인 판단 의존</td><td>이슈 유형별 SOP·에스컬레이션 경로 문서화</td></tr>
-            <tr><td>피드백 구조</td><td>없음</td><td>4단계 가이드 표준화, 신규 인력 독립 처리 기간 단축</td></tr>
-            <tr><td>확장성</td><td>담당자 이탈 시 운영 공백 불가피</td><td>타부서 순환 지원 인력도 동일 기준 적용 · BPO 전환 가능한 표준 기준 완성</td></tr>
-          </tbody>
-        </table>
-      </div>
-      <div class="modal-result">
-        <div class="modal-result-num">누적 7명</div>
-        <div class="modal-result-desc">인입량·업무 난이도·숙련도 기준으로 누적 7명의 타부서 순환 지원 인력이 적용할 수 있는 담당 범위·처리 우선순위 기준을 설계했습니다. 담당자 교체 상황에서도 응대 품질 편차 없이 운영 연속성 유지.<br><br>전용 WFM 솔루션이 없는 환경에서도 인입량·업무 난이도·숙련도를 기준으로 인력 배치와 업무 분배 기준을 직접 설계해 운영에 적용했습니다.</div>
-      </div>
-    </div>
+  <div class="card-footer">
+    <div id="syncBadge" class="sync-badge syncing"><div class="sync-dot"></div><span id="syncText">연결 중...</span></div>
+    <div style="display:flex;gap:8px;"><button class="btn" onclick="clearAll()">초기화</button><button class="btn btn-dark" onclick="window.print()">🖨 인쇄</button></div>
   </div>
 </div>
-
-<!-- MODAL 2: SLA -->
-<div class="modal-overlay" id="m2" onclick="closeModal(event,'m2')">
-  <div class="modal">
-    <div class="modal-head">
-      <div>
-        <div class="modal-tags">
-          <span class="c-tag primary">SLA · 운영 지표 설계</span>
-          <span class="c-tag">CRM 구조 개선</span>
-          <span class="c-tag">리드타임 단축</span>
-        </div>
-        <div class="modal-title">에스컬레이션 기준·처리 SOP·리드타임 기준 설계로 SLA 운영 체계 구축</div>
-        <div class="modal-sub">초록마을 · 2024.12 – 재직 중</div>
-      </div>
-      <button class="modal-close" onclick="closeModalBtn('m2')">
-        <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M1 1l10 10M11 1L1 11" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
-      </button>
-    </div>
-    <div class="modal-body">
-      <div class="modal-section">
-        <div class="modal-section-label">Problem</div>
-        <div class="modal-section-text">
-          처리 기준이 없어 이슈 유형마다 응대 편차가 컸습니다. CRM 상태값이 자동으로 '처리완료'로 전환돼 추가 확인 필요 건에서 <strong>처리 누락이 반복</strong>됐고, 환불·교환 시 고객 재확인 왕복이 발생해 리드타임이 길어졌습니다. 에스컬레이션 기준이 없어 담당자별로 판단이 달랐습니다.
-        </div>
-      </div>
-      <div class="modal-section">
-        <div class="modal-section-label">Action</div>
-        <ul class="modal-ul">
-          <li>상품·배송·환불·민감 케이스별 처리 SLA 기준을 정의하고 에스컬레이션 경로를 문서화</li>
-          <li>CRM 상태값에 <strong>'처리중' 중간 단계</strong>를 추가해 처리 누락 방지 구조 설계, 고객 화면 상태 표시 분기('확인 중') 반영까지 연결</li>
-          <li>환불·교환 CRM 필드를 <strong>고객 의도 기반 필수 선택값</strong>으로 재구성해 고객 재확인 왕복 구조적 제거</li>
-          <li>대량 배송 지연 시 도착희망일 기준 재배송·취소·대기 판단 SLA를 즉시 수립해 <strong>COO 보고·승인 후 전사 기준 확정</strong></li>
-        </ul>
-      </div>
-      <div class="modal-section">
-        <div class="modal-section-label">Before / After</div>
-        <table class="modal-table">
-          <thead><tr><th>항목</th><th>Before</th><th>After</th></tr></thead>
-          <tbody>
-            <tr><td>에스컬레이션 기준</td><td>담당자 개인 판단</td><td>이슈 유형별 에스컬레이션 경로 문서화</td></tr>
-            <tr><td>CRM 상태 관리</td><td>자동 '처리완료' → 누락 반복</td><td>'처리중' 단계 추가, 고객 화면 분기 반영</td></tr>
-            <tr><td>환불·교환 리드타임</td><td>고객 재확인 왕복 발생</td><td>필수 선택값 구조로 왕복 95%+ 제거</td></tr>
-            <tr><td>대량 이슈 기준</td><td>없음 → 혼선 발생</td><td>SLA 즉시 수립 → COO 승인 → 전사 기준</td></tr>
-          </tbody>
-        </table>
-      </div>
-      <div class="modal-result">
-        <div class="modal-result-num">95%+</div>
-        <div class="modal-result-desc">고객 재확인 왕복 95%+ 제거, 처리 리드타임 단축. CRM 상태값 구조 개선으로 처리 누락 방지. 에스컬레이션 기준 문서화로 담당자별 응대 편차 제거. 대량 지연 SLA는 COO 승인 후 전사 운영 기준으로 확정.</div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- MODAL 3: VOC -->
-<div class="modal-overlay" id="m3" onclick="closeModal(event,'m3')">
-  <div class="modal">
-    <div class="modal-head">
-      <div>
-        <div class="modal-tags">
-          <span class="c-tag primary">데이터 기반 운영 개선</span>
-          <span class="c-tag">VOC 분석</span>
-          <span class="c-tag">반복 인입 차단</span>
-        </div>
-        <div class="modal-title">VOC 173건 전수 분류 → 구조적 원인 규명 → 반복 인입 96% 감소</div>
-        <div class="modal-sub">초록마을 · 2024.12 – 재직 중</div>
-      </div>
-      <button class="modal-close" onclick="closeModalBtn('m3')">
-        <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M1 1l10 10M11 1L1 11" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
-      </button>
-    </div>
-    <div class="modal-body">
-      <div class="modal-section">
-        <div class="modal-section-label">Problem</div>
-        <div class="modal-section-text">
-          프로모션 오인 문의가 매월 100건 이상 반복 인입됐습니다. 개별 처리로는 근본 해결이 불가능했고, 구조적 원인이 무엇인지 <strong>데이터로 규명되지 않은 상태</strong>였습니다. 배송 제약 상품 관련 문의도 일 6~10건씩 반복됐지만 UX 문제인지 정책 문제인지 구분이 안 된 상태였습니다.
-        </div>
-      </div>
-      <div class="modal-section">
-        <div class="modal-section-label">Action</div>
-        <ul class="modal-ul">
-          <li>프로모션 오인 VOC <strong>173건 전수 분류</strong> (인입 원인·발생 채널·고객 행동 시점·정책 인지 여부 4축)</li>
-          <li><strong>82% 동일 구조적 원인</strong> 규명, 모바일 채널 집중도 94.8% 확인 → EC 리드와 협의해 운영 정책 직접 수립</li>
-          <li>배송 VOC 패턴 분석으로 UX 구조 원인 발견 → <strong>개발팀에 직접 MVP 제안 → 당일 구현</strong></li>
-          <li>운영 정책 수립과 UX 개선을 병행해 반복 인입 구조적 차단</li>
-        </ul>
-      </div>
-      <div class="modal-section">
-        <div class="modal-section-label">분석 데이터</div>
-        <table class="modal-table">
-          <thead><tr><th>분석 항목</th><th>수치</th><th>활용</th></tr></thead>
-          <tbody>
-            <tr><td>전수 분류 건수</td><td>173건</td><td>인입 원인·채널·행동 시점·정책 인지 여부 4가지 축 분류</td></tr>
-            <tr><td>동일 원인 비율</td><td>82%</td><td>구조적 원인 단일화 확인 → 운영 정책 수립 근거</td></tr>
-            <tr><td>모바일 채널 집중도</td><td>94.8%</td><td>개선 우선 채널 정의 및 EC 리드 협의 근거 데이터</td></tr>
-            <tr><td>반복 인입 감소</td><td>-96%</td><td>운영 정책 + UX 개선 병행으로 구조적 재발 차단</td></tr>
-          </tbody>
-        </table>
-      </div>
-      <div class="modal-result">
-        <div class="modal-result-num">96% 감소</div>
-        <div class="modal-result-desc">월 106건 → 4건. 배송 제약 상품 문의 일 6~10건 → 0건. 상품운영팀이 동일 UX 패턴을 자체 확대 적용, 단일 제안이 사내 개선 표준으로 전파.</div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- MODAL 4: 자동화 -->
-<div class="modal-overlay" id="m4" onclick="closeModal(event,'m4')">
-  <div class="modal">
-    <div class="modal-head">
-      <div>
-        <div class="modal-tags">
-          <span class="c-tag primary">운영 자동화 · AI 활용</span>
-          <span class="c-tag">생산성 개선</span>
-          <span class="c-tag">데이터 정합성</span>
-        </div>
-        <div class="modal-title">Chrome Extension 구현 · 처리 단계 8→2 단축 · 귀책 기준값 자동 반영으로 정합성 확보</div>
-        <div class="modal-sub">초록마을 · 2024.12 – 재직 중</div>
-      </div>
-      <button class="modal-close" onclick="closeModalBtn('m4')">
-        <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M1 1l10 10M11 1L1 11" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
-      </button>
-    </div>
-    <div class="modal-body">
-      <div class="modal-section">
-        <div class="modal-section-label">Problem</div>
-        <div class="modal-section-text">
-          재배송·반품 처리 시 담당자가 6~8단계의 반복 입력을 매건 수작업으로 처리해야 했습니다. 귀책 기준값을 수동 입력하는 과정에서 <strong>분류 오류가 발생해 후속 정산 데이터 정합성 문제</strong>로 이어졌습니다. 대량 처리 상황에서 1인이 1,000건 이상을 처리해야 하는 과부하 상황이 예상됐습니다.
-        </div>
-      </div>
-      <div class="modal-section">
-        <div class="modal-section-label">Action</div>
-        <ul class="modal-ul">
-          <li>Claude를 활용해 <strong>Chrome Extension 직접 구현.</strong> 재배송 6단계→2단계, 반품 8단계→2단계로 처리 동선 단축</li>
-          <li><strong>귀책 기준값 자동 반영 로직</strong> 삽입으로 분류 오류를 구조적으로 차단, 후속 정산 데이터 정합성 확보</li>
-          <li>Claude·GPT 도입 필요성 직접 기획·제안 → <strong>비개발 직군 유일 AI 업무비 공식 승인</strong></li>
-          <li>Apps Script·VBA 기반 반복 집계 자동화, Zapier 연동 Slack 알림 자동 발송</li>
-        </ul>
-      </div>
-      <div class="modal-section">
-        <div class="modal-section-label">Before / After</div>
-        <table class="modal-table">
-          <thead><tr><th>자동화 항목</th><th>Before</th><th>After</th></tr></thead>
-          <tbody>
-            <tr><td>재배송 처리 단계</td><td>6단계 수작업</td><td>2단계 (Extension 자동 처리)</td></tr>
-            <tr><td>반품 처리 단계</td><td>8단계 수작업</td><td>2단계 (Extension 자동 처리)</td></tr>
-            <tr><td>귀책 기준값</td><td>수동 입력 → 분류 오류 발생</td><td>자동 반영 → 오류 구조적 차단</td></tr>
-            <tr><td>반복 집계 업무</td><td>수작업 집계</td><td>Apps Script·VBA 자동화</td></tr>
-          </tbody>
-        </table>
-      </div>
-      <div class="modal-result">
-        <div class="modal-result-num">1,151건</div>
-        <div class="modal-result-desc">재배송·반품 1,151건 단독 처리. 처리 단계 8→2단계 단축. 귀책 기준값 자동 반영으로 분류 오류 구조적 차단, 후속 정산 데이터 정합성 확보. 비개발 직군 유일 AI 업무비 공식 승인.</div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div class="wrap"><div class="hr"></div></div>
-
-<!-- JD MATCH -->
-<section class="sec" id="jd">
-  <div class="wrap">
-    <p class="sec-eyebrow">JD Match</p>
-    <h2 class="sec-title">에이블리코퍼레이션 채용 요건과의 매칭</h2>
-    <div class="jd-grid">
-
-      <div class="jd-item">
-        <div class="jd-left">
-          <div class="jd-num">자격요건 01</div>
-          <div class="jd-req">WFM 전반 경험 및 비용 최적화 성과</div>
-          <div class="jd-keyword-row">
-            <span class="jd-kw">인력 산정</span><span class="jd-kw">담당 범위 설계</span><span class="jd-kw">실시간 인입 대응</span>
-          </div>
-        </div>
-        <div class="jd-right">
-          <div class="jd-match-label">My Experience</div>
-          <div class="jd-match-title">CS 조직 공백 상황에서 WFM 관점 인력 배치 직접 설계</div>
-          <div class="jd-match-points">
-            <div class="jd-match-point">전용 WFM 솔루션이 없는 환경에서도 인입량·업무 난이도·숙련도를 기준으로 타부서 순환 지원 인력 7명의 담당 범위와 처리 우선순위를 직접 설계</div>
-            <div class="jd-match-point">단순 문의는 지원 인력이 처리하고 환불·보상·민감 이슈는 검수 후 직접 판단하는 구조로 분리해 인력 과배치 없이 운영 연속성 유지</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="jd-item">
-        <div class="jd-left">
-          <div class="jd-num">자격요건 02</div>
-          <div class="jd-req">SLA 직접 설계·운영 경험, 성과 중심 마인드</div>
-          <div class="jd-keyword-row">
-            <span class="jd-kw">SLA 설계</span><span class="jd-kw">실적 분석·관리</span><span class="jd-kw">성과 중심</span>
-          </div>
-        </div>
-        <div class="jd-right">
-          <div class="jd-match-label">My Experience</div>
-          <div class="jd-match-title">SLA 직접 설계 + CRM 구조 재설계로 수치 입증</div>
-          <div class="jd-match-points">
-            <div class="jd-match-point">에스컬레이션 기준·처리 SOP·리드타임 기준 직접 설계, CRM 상태값 구조 재설계로 처리 누락 방지</div>
-            <div class="jd-match-point">대량 배송 지연 시 SLA 즉시 수립해 COO 승인 후 전사 운영 기준 확정. 고객 재확인 왕복 95%+ 제거, 반복 인입 96% 감소</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="jd-item">
-        <div class="jd-left">
-          <div class="jd-num">자격요건 03</div>
-          <div class="jd-req">BPO 벤더사·내부 유관부서 이해관계자 협업</div>
-          <div class="jd-keyword-row">
-            <span class="jd-kw">BPO 협업</span><span class="jd-kw">유관부서 협의</span><span class="jd-kw">이해관계자 관리</span>
-          </div>
-        </div>
-        <div class="jd-right">
-          <div class="jd-match-label">My Experience</div>
-          <div class="jd-match-title">BPO 전환 가능한 표준 기준 설계 + 유관부서 협업 실행</div>
-          <div class="jd-match-points">
-            <div class="jd-match-point">타부서 순환 지원 인력도 동일 기준으로 처리할 수 있도록 SOP·에스컬레이션·검수 기준을 문서화해, BPO 운영으로 확장 가능한 표준 기준을 설계</div>
-            <div class="jd-match-point">개발·EC·상품·물류 유관부서와 협업해 서비스 개선 과제를 실행으로 연결, 이슈 선제 공유로 에스컬레이션 방지</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="jd-item">
-        <div class="jd-left">
-          <div class="jd-num">자격요건 04</div>
-          <div class="jd-req">데이터 기반 문제 진단·개선안 도출</div>
-          <div class="jd-keyword-row">
-            <span class="jd-kw">통계 분석</span><span class="jd-kw">인사이트 도출</span><span class="jd-kw">개선안 실행</span>
-          </div>
-        </div>
-        <div class="jd-right">
-          <div class="jd-match-label">My Experience</div>
-          <div class="jd-match-title">VOC 전수 분류 → 원인 규명 → 정책 수립·UX 개선까지 연결</div>
-          <div class="jd-match-points">
-            <div class="jd-match-point">173건 전수 분류로 82% 동일 원인 규명 → 운영 정책 직접 수립 → 96% 감소</div>
-            <div class="jd-match-point">배송 VOC 패턴 분석으로 UX 구조 원인 발견 → 개발팀 제안·구현 → 0건. 분석을 리포팅으로 끝내지 않고 실행으로 연결</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="jd-item">
-        <div class="jd-left">
-          <div class="jd-num">자격요건 05</div>
-          <div class="jd-req">핵심 운영 지표 및 프로세스 이해도</div>
-          <div class="jd-keyword-row">
-            <span class="jd-kw">운영 지표</span><span class="jd-kw">대시보드</span><span class="jd-kw">프로세스 관리</span>
-          </div>
-        </div>
-        <div class="jd-right">
-          <div class="jd-match-label">My Experience</div>
-          <div class="jd-match-title">CR 감소·리드타임·CRM 구조화로 핵심 운영 지표 직접 관리</div>
-          <div class="jd-match-points">
-            <div class="jd-match-point">Contact Rate 감소 관점의 반복 문의 개선, 리드타임 단축, CRM 상태값 구조화를 통해 고객지원 핵심 지표 직접 관리</div>
-            <div class="jd-match-point">Excel·Google Sheets 피벗·함수 기반 집계로 운영 데이터 분류·리포팅, SQL 학습 중</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="jd-item">
-        <div class="jd-left">
-          <div class="jd-num">우대사항</div>
-          <div class="jd-req">G-Suite, 협업툴, 생산성 향상 도구 활용</div>
-          <div class="jd-keyword-row">
-            <span class="jd-kw">Google Sheets</span><span class="jd-kw">Apps Script</span><span class="jd-kw">AI 도구</span>
-          </div>
-        </div>
-        <div class="jd-right">
-          <div class="jd-match-label">My Experience</div>
-          <div class="jd-match-title">AI·자동화 실무 적용 + 비개발 직군 유일 AI 업무비 승인</div>
-          <div class="jd-match-points">
-            <div class="jd-match-point">Google Sheets·Apps Script 자동화, Slack Zapier 연동, Chrome Extension 직접 구현</div>
-            <div class="jd-match-point">Claude·GPT를 VOC 분류·계약서 분석·가이드 초안 생성에 실무 적용. 비개발 직군 유일 AI 업무비 공식 승인</div>
-          </div>
-        </div>
-      </div>
-
-    </div>
-  </div>
-</section>
-
-<!-- CONTACT -->
-<footer id="contact">
-  <div class="wrap">
-    <div class="footer-grid">
-      <div>
-        <div class="footer-name">오희은</div>
-        <div class="footer-sub">에이블리코퍼레이션 고객 커뮤니케이션 운영기획 담당자 지원</div>
-      </div>
-      <div style="display:flex; flex-direction:column; gap:10px; align-items:flex-end;">
-        <a href="mailto:gldms1009@naver.com" class="btn btn-outline" style="font-size:13px; padding:10px 20px;">
-          gldms1009@naver.com
-          <svg width="13" height="13" viewBox="0 0 14 14" fill="none"><path d="M2.5 7H11.5M8 3.5L11.5 7L8 10.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </a>
-        <span style="font-size:13px; color:var(--text-3);">010-2357-2674</span>
-      </div>
-    </div>
-  </div>
-</footer>
 
 <script>
-  // Header scroll
-  const hd = document.getElementById('hd');
-  window.addEventListener('scroll', () => { hd.classList.toggle('on', window.scrollY > 10); });
+  const firebaseConfig = {
+    apiKey: "AIzaSyBJK3KyNVJeSBOmU6BBZesdrodkS4MfT_4",
+    authDomain: "geunsoek-fed23.firebaseapp.com",
+    projectId: "geunsoek-fed23",
+    storageBucket: "geunsoek-fed23.firebasestorage.app",
+    messagingSenderId: "243271968223",
+    appId: "1:243271968223:web:44ad146696fcd7cabe506a"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const db     = firebase.firestore();
+  const docRef = db.collection('state').doc('main');
 
-  // Mobile nav
-  const navToggle = document.getElementById('navToggle');
-  const nav = document.getElementById('nav');
-  navToggle.addEventListener('click', () => {
-    navToggle.classList.toggle('open');
-    nav.classList.toggle('open');
+  let state = { baseYear: 2026, numRows: 13, rows: [] };
+  let saveTimer = null;
+  let localChangePending = false;
+
+  function setSyncStatus(s) {
+    const badge = document.getElementById('syncBadge');
+    const text  = document.getElementById('syncText');
+    badge.className = 'sync-badge ' + (s === 'connected' ? '' : s);
+    text.textContent = s === 'connected' ? '실시간 연결됨' : s === 'syncing' ? '저장 중...' : '오프라인';
+  }
+
+  function doSave(s) {
+    const rows = [];
+    for (let i = 0; i < s.numRows; i++) {
+      const r = s.rows[i] || { name:'', year:'', note:'' };
+      rows.push({ name: r.name||'', year: r.year||'', note: r.note||'' });
+    }
+    docRef.set({ baseYear: s.baseYear, numRows: s.numRows, rows })
+      .then(() => { setSyncStatus('connected'); localChangePending = false; })
+      .catch(() => setSyncStatus('offline'));
+  }
+
+  function saveState(s, immediate) {
+    setSyncStatus('syncing');
+    localChangePending = true;
+    if (saveTimer) clearTimeout(saveTimer);
+    if (immediate) { doSave(s); }
+    else { saveTimer = setTimeout(() => doSave(s), 600); }
+  }
+
+  docRef.onSnapshot({ includeMetadataChanges: true }, snapshot => {
+    if (snapshot.metadata.hasPendingWrites) return;
+    if (localChangePending) return;
+    if (snapshot.exists) {
+      const d = snapshot.data();
+      state.baseYear = d.baseYear || 2026;
+      state.numRows  = d.numRows  || 13;
+      state.rows     = d.rows     || [];
+    }
+    render();
+    setSyncStatus('connected');
+  }, err => { console.error(err); setSyncStatus('offline'); });
+
+  function getMilestone(t) {
+    if (t === null) return { text:'', cls:'', badge:'' };
+    if (t >= 10) return { text:'🏅 10년 이상', cls:'m10', badge:'badge-gold' };
+    if (t ===  5) return { text:'🎖 5년',      cls:'m5',  badge:'badge-green' };
+    if (t ===  3) return { text:'✅ 3년',      cls:'m3',  badge:'badge-blue' };
+    return { text:'', cls:'', badge:'' };
+  }
+  function esc(v) { return String(v||'').replace(/"/g,'&quot;').replace(/</g,'&lt;'); }
+
+  function render() {
+    const YEAR = parseInt(state.baseYear) || new Date().getFullYear();
+    document.getElementById('baseYear').value = YEAR;
+    document.getElementById('rowCountDisplay').textContent = state.numRows;
+    const tbody = document.getElementById('tbody');
+    const fi = document.activeElement;
+    const fidx = fi ? fi.dataset.idx : null, ffld = fi ? fi.dataset.field : null;
+    tbody.innerHTML = '';
+    let n10=[], n5=[], n3=[];
+    for (let i = 0; i < state.numRows; i++) {
+      const d = state.rows[i] || { name:'', year:'', note:'' };
+      const yr = parseInt(d.year);
+      const ten = (!isNaN(yr) && d.year!=='') ? YEAR-yr : null;
+      const grd = ten!==null ? ten+1 : null;
+      const ms = getMilestone(ten);
+      if (ms.cls==='m10' && d.name) n10.push(d.name);
+      if (ms.cls==='m5'  && d.name) n5.push(d.name);
+      if (ms.cls==='m3'  && d.name) n3.push(d.name);
+      const tr = document.createElement('tr');
+      if (ms.cls) tr.classList.add(ms.cls);
+      tr.innerHTML = `
+        <td class="no">${i+1}</td>
+        <td class="name"><input type="text" placeholder="이름" value="${esc(d.name)}" data-idx="${i}" data-field="name"></td>
+        <td class="year"><input type="number" placeholder="예) 2020" value="${esc(d.year)}" data-idx="${i}" data-field="year" min="1990" max="${YEAR}"></td>
+        <td class="${ten===null?'empty-val':''}">${ten!==null?ten+'년':'—'}</td>
+        <td class="${grd===null?'empty-val':''}">${grd!==null?grd+'년차':'—'}</td>
+        <td><div class="badge-cell">${ms.text?`<span class="${ms.badge}" style="font-size:12px;">${ms.text}</span>`:'<span style="color:#CCC;font-size:12px;">—</span>'}</div></td>
+        <td class="note"><input type="text" placeholder="메모" value="${esc(d.note)}" data-idx="${i}" data-field="note"></td>
+      `;
+      tbody.appendChild(tr);
+    }
+    updateSummaryPanel(n10, n5, n3);
+    tbody.querySelectorAll('input').forEach(inp => {
+      inp.addEventListener('input', onCellInput);
+      inp.addEventListener('blur', onCellBlur);
+      inp.addEventListener('keydown', e => { if (e.key==='Enter') { e.preventDefault(); inp.blur(); } });
+      if (inp.dataset.idx===fidx && inp.dataset.field===ffld) {
+        inp.focus(); const l=inp.value.length; inp.setSelectionRange(l,l);
+      }
+    });
+  }
+
+  function updateSummaryPanel(n10, n5, n3) {
+    document.getElementById('cnt10').textContent = n10.length;
+    document.getElementById('cnt5').textContent  = n5.length;
+    document.getElementById('cnt3').textContent  = n3.length;
+    function rn(id, names, cls) {
+      const el = document.getElementById(id);
+      el.innerHTML = names.length===0 ? '<span class="no-names">해당자 없음</span>'
+        : names.map(n=>`<span class="name-chip ${cls}">${n}</span>`).join('');
+    }
+    rn('names10', n10, 'name-chip-gold');
+    rn('names5',  n5,  'name-chip-green');
+    rn('names3',  n3,  'name-chip-blue');
+  }
+
+  function onCellInput(e) {
+    const idx=parseInt(e.target.dataset.idx), field=e.target.dataset.field;
+    if (!state.rows[idx]) state.rows[idx]={name:'',year:'',note:''};
+    state.rows[idx][field]=e.target.value;
+    saveState(state, false);
+    quickRefreshRow(idx); updateCounts();
+  }
+
+  function onCellBlur() {
+    if (localChangePending) saveState(state, true);
+  }
+
+  function quickRefreshRow(idx) {
+    const YEAR=parseInt(state.baseYear)||new Date().getFullYear();
+    const d=state.rows[idx]||{}, tr=document.querySelectorAll('#tbody tr')[idx];
+    if (!tr) return;
+    const yr=parseInt(d.year), ten=(!isNaN(yr)&&d.year!=='') ? YEAR-yr : null;
+    const grd=ten!==null?ten+1:null, ms=getMilestone(ten);
+    tr.className=ms.cls||'';
+    tr.cells[3].textContent=ten!==null?ten+'년':'—'; tr.cells[3].className=ten===null?'empty-val':'';
+    tr.cells[4].textContent=grd!==null?grd+'년차':'—'; tr.cells[4].className=grd===null?'empty-val':'';
+    tr.cells[5].innerHTML=ms.text
+      ?`<div class="badge-cell"><span class="${ms.badge}" style="font-size:12px;">${ms.text}</span></div>`
+      :'<div class="badge-cell"><span style="color:#CCC;font-size:12px;">—</span></div>';
+  }
+
+  function updateCounts() {
+    const YEAR=parseInt(state.baseYear)||new Date().getFullYear();
+    let n10=[],n5=[],n3=[];
+    for (let i=0;i<state.numRows;i++) {
+      const d=state.rows[i]||{}, yr=parseInt(d.year);
+      const ten=(!isNaN(yr)&&d.year!=='') ? YEAR-yr : null, ms=getMilestone(ten);
+      if (ms.cls==='m10'&&d.name) n10.push(d.name);
+      if (ms.cls==='m5' &&d.name) n5.push(d.name);
+      if (ms.cls==='m3' &&d.name) n3.push(d.name);
+    }
+    updateSummaryPanel(n10, n5, n3);
+  }
+
+  document.getElementById('baseYear').addEventListener('change', function() {
+    const val=parseInt(this.value);
+    if (!isNaN(val)&&val>=2000&&val<=2100) { state.baseYear=val; saveState(state,true); render(); }
   });
 
-  // Modal
-  function openModal(id) {
-    document.getElementById(id).classList.add('open');
-    document.body.style.overflow = 'hidden';
+  function changeRows(delta) {
+    const next=state.numRows+delta;
+    if (next<1||next>50) return;
+    state.numRows=next; saveState(state,true); render();
   }
-  function closeModal(e, id) {
-    if (e.target === document.getElementById(id)) {
-      document.getElementById(id).classList.remove('open');
-      document.body.style.overflow = '';
-    }
-  }
-  function closeModalBtn(id) {
-    document.getElementById(id).classList.remove('open');
-    document.body.style.overflow = '';
-  }
-  document.addEventListener('keydown', e => {
-    if (e.key === 'Escape') {
-      document.querySelectorAll('.modal-overlay.open').forEach(m => {
-        m.classList.remove('open');
-        document.body.style.overflow = '';
-      });
-    }
-  });
 
-  // Fade-in
-  const obs = new IntersectionObserver(entries => {
-    entries.forEach(e => {
-      if (e.isIntersecting) { e.target.classList.add('show'); obs.unobserve(e.target); }
-    });
-  }, { threshold: 0, rootMargin: '0px 0px -40px 0px' });
-  document.querySelectorAll('.fi').forEach(el => obs.observe(el));
-
-  function showVisible() {
-    document.querySelectorAll('.fi:not(.show)').forEach(el => {
-      const r = el.getBoundingClientRect();
-      if (r.top < window.innerHeight && r.bottom > 0) el.classList.add('show');
-    });
+  function clearAll() {
+    if (confirm('모든 데이터를 초기화할까요?')) { state.rows=[]; saveState(state,true); render(); }
   }
-  showVisible()
+
+  render();
+</script>
+</body>
+ </html>
